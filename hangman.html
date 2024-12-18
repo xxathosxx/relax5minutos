@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Juego del Ahorcado</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="hangman.js" defer></script>
+</head>
+<body>
+    <div class="container">
+        <h1>Juego del Ahorcado - Coches</h1>
+        <div id="categoryMenu">
+            <h2>Elige una categoría</h2>
+            <button onclick="startGame('coches')">Coches</button>
+            <button onclick="startGame('animales')">Animales</button>
+            <button onclick="startGame('paises')">Países</button>
+            <button onclick="startGame('frutas')">Frutas</button>
+            <button onclick="startGame('colores')">Colores</button>
+        </div>
+        <div id="hangmanGame" style="display: none;">
+            <canvas id="hangmanCanvas" width="200" height="200"></canvas>
+            <p id="wordDisplay"></p>
+            <p id="message"></p>
+            <input type="text" id="letterInput" maxlength="1">
+            <button onclick="guessLetter()">Adivinar</button>
+            <p>Intentos restantes: <span id="attemptsLeft"></span></p>
+            <button onclick="window.location.href='index.html'">Volver al menú</button>
+        </div>
+    </div>
+</body>
+</html>

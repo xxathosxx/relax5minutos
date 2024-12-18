@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Juego de Pin Pon</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background-color: #222;
+        }
+        .game-area {
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            background-color: black;
+        }
+        .paddle {
+            width: 10px;
+            height: 100px;
+            background-color: white;
+            position: absolute;
+        }
+        .ball {
+            width: 15px;
+            height: 15px;
+            background-color: white;
+            border-radius: 50%;
+            position: absolute;
+        }
+        .score {
+            color: white;
+            font-size: 2em;
+            position: absolute;
+            top: 10px;
+            width: 100%;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="game-area" id="game-area">
+        <div class="score" id="score">Jugador 1: 0 | Jugador 2: 0</div>
+        <div class="paddle" id="left-paddle"></div>
+        <div class="paddle" id="right-paddle"></div>
+        <div class="ball" id="ball"></div>
+    </div>
+
+    <script>
+        const gameArea = document.getElementById('game-area');
+        const leftPaddle = document.getElementById('left-paddle');
+        const rightPaddle = document.getElementById('right-paddle');
+        const ball = document.getElementById('ball');
+        const scoreElement = document.getElementById('score');
+
+        let leftPaddleY = gameArea.clientHeight / 2 - 50; // Centrado vertical
+        let rightPaddleY = gameArea.clientHeight / 2 - 50;
+        let ballX = gameArea.clientWidth / 2 - 7.5; // Centrado horizontal
+        let ballY = gameArea.clientHeight / 2 - 7.5;
+        let ballSpeedX = 4;
+        let ballSpeedY = 4;
+        let paddleSpeed = 30;
+        let leftScore = 0;
+        let rightScore = 0;
+
+        // Ajustar las posiciones de las paletas y la pelota
+        function updatePositions() {
+            leftPaddle.style.top = `${leftPaddleY}px`;
+            rightPaddle.style.top = `${rightPaddleY}px`;
+            ball.style.left = `${ballX}px`;
+            ball.style.top = `${ballY}px`;
+        }
+
+        // Mover la pelota
+        function moveBall() {
+            ballX += ballSpeedX;
+            ballY += ballSpeedY;
+
+            // Colisión con las paredes superior e inferior
+            if (ballY <= 0 || ballY >= gameArea.clientHeight - 15) {
+                ballSpeedY = -ballSpeedY;
+            }
+
+            // Colisión con las paletas
+            if (ballX <= 10 && ballY >= leftPaddleY && ballY <= leftPaddleY + 100) {
+                ballSpeedX = -ballSpeedX;
+            }
+
+            if (ballX >= gameArea.clientWidth - 25 && ballY >= rightPaddleY && ballY <= rightPaddleY + 100) {
+                ballSpeedX = -ballSpeedX;
+            }
+
+            // Anotar puntos
+            if (ballX <= 0) {
+                rightScore++;
+                resetBall();
+            }
+
+            if (ballX >= gameArea.clientWidth - 15) {
+                leftScore++;
+                resetBall();
+            }
+
+            // Actualizar la puntuación
+            scoreElement.textContent = `Jugador 1: ${leftScore} | Jugador 2: ${rightScore}`;
+        }
+
+        // Restablecer la pelota después de un punto
+        function resetBall() {
+            ballX = gameArea.clientWidth / 2 - 7.5;
+            ballY = gameArea.clientHeight / 2 - 7.5;
+            ballSpeedX = -ballSpeedX;
+            ballSpeedY = 4;
+        }
+
+        // Mover la paleta izquierda con las teclas de flecha arriba y abajo
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'ArrowUp' && leftPaddleY > 0) {
+                leftPaddleY -= paddleSpeed;
+            }
+            if (event.key === 'ArrowDown' && leftPaddleY < gameArea.clientHeight - 100) {
+                leftPaddleY += paddleSpeed;
+            }
+        });
+
+        // Mover la paleta derecha (IA simple)
+        function moveRightPaddle() {
+            const ballCenterY = ballY + 7.5;
+            if (rightPaddleY + 50 < ballCenterY && rightPaddleY < gameArea.clientHeight - 100) {
+                rightPaddleY += paddleSpeed;
+            } else if (rightPaddleY + 50 > ballCenterY && rightPaddleY > 0) {
+                rightPaddleY -= paddleSpeed;
+            }
+        }
+
+        // Función de animación para el juego
+        function gameLoop() {
+            moveBall();
+            moveRightPaddle();
+            updatePositions();
+            requestAnimationFrame(gameLoop);
+        }
+
+        // Iniciar el juego
+        gameLoop();
+    </script>
+</body>
+</html>
